@@ -6,6 +6,7 @@ Programming a password cracking tool in python
 The project is about the programming of a password-cracking tool which allows users to crack a password with BruteForce and password lists.
 
 ## Verwendete Bibliotheken
-- `hashlib`: Wird zum Hashen von Passwörtern genutzt (SHA-256, MD5, SHA-512)
-- `itertools`: Erzeugt alle möglichen Kombinationen für den Brute-Force-Angriff
-- `string`: Enthält Zeichenmengen (Buchstaben, Zahlen), die für Brute-Force genutzt werden
+- `hashlib`: used to hash the passwords (SHA-256, MD5, SHA-512)
+- `itertools`: Creates all password possibilities for Brute Force
+- `string`: For characters set
+- `concurrent`: Allows Multithreading for faster Brute Force
