@@ -40,7 +40,9 @@ def brute_force_worker(guess, target_hash, algorithm):
 def brute_force_attack(target_password, max_length=4, algorithm="sha256"):
     """Attempts to crack a password using a brute-force attack with multithreading."""
     target_hash = hash_password(target_password, algorithm)
-    characters = string.ascii_lowercase + string.digits  # Using lowercase letters and digits only
+    
+    # Include lowercase, uppercase, digits, and special characters
+    characters = string.ascii_lowercase + string.ascii_uppercase + string.digits + string.punctuation
     
     with concurrent.futures.ThreadPoolExecutor() as executor:
         for length in range(1, max_length + 1):
@@ -63,7 +65,7 @@ if __name__ == "__main__":
     choice = input("Enter your choice (1/2/3): ")
 
     # Define target password and dictionary file
-    password_to_crack = "abc"
+    password_to_crack = "aB1!"  # Test password
     password_list = "PasswordList.txt"
     
     found_password = None
@@ -76,7 +78,7 @@ if __name__ == "__main__":
         method_used = "Dictionary Attack"
     elif choice == "2":
         print("\n[+] Starting Brute-Force Attack with Multithreading...")
-        found_password = brute_force_attack(password_to_crack, max_length=3)
+        found_password = brute_force_attack(password_to_crack, max_length=4)
         method_used = "Brute-Force Attack"
     elif choice == "3":
         print("\n[+] Starting Dictionary Attack...")
@@ -85,7 +87,7 @@ if __name__ == "__main__":
         
         if not found_password:
             print("\n[+] Dictionary Attack failed. Starting Brute-Force Attack with Multithreading...")
-            found_password = brute_force_attack(password_to_crack, max_length=3)
+            found_password = brute_force_attack(password_to_crack, max_length=4)
             method_used = "Brute-Force Attack"
     
     # Display final results
