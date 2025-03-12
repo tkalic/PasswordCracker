@@ -2,14 +2,8 @@ import hashlib
 import itertools
 import string
 
-# Passwort eingeben
-# Hash davon speichern
-# Hash-Algorithmus wählen
-# Bibliothek hinzufügen
-
-
 def hash_password(password, algorithm="sha256"):
-    """ Hashes a password using the specified algorithm. """
+    """Hashes a password using the specified algorithm."""
     if algorithm == "sha256":
         return hashlib.sha256(password.encode()).hexdigest()
     elif algorithm == "md5":
@@ -19,10 +13,8 @@ def hash_password(password, algorithm="sha256"):
     else:
         raise ValueError("Unsupported hashing algorithm")
 
-# 1. Dictionary attack
-
 def dictionary_attack(password_list_file, target_password, algorithm="sha256"):
-    """ Tries to crack a hashed password using a dictionary attack. """
+    """Attempts to crack a password using a dictionary attack."""
     try:
         with open(password_list_file, "r", encoding="utf-8") as file:
             target_hash = hash_password(target_password, algorithm)
@@ -30,34 +22,64 @@ def dictionary_attack(password_list_file, target_password, algorithm="sha256"):
             for line in file:
                 word = line.strip()
                 if hash_password(word, algorithm) == target_hash:
-                    return f"[+] Password found: {word}"
+                    return word  # Password found
         
-        return "[-] Password not found in dictionary"
+        return None  # Password not found in dictionary
     
     except FileNotFoundError:
-        return "[!] Error: Password list file not found."
-
-# 2. Brute-Force  attack
+        print("[!] Error: Password list file not found.")
+        return None
 
 def brute_force_attack(target_password, max_length=4, algorithm="sha256"):
-    """ Tries to crack a hashed password using brute-force attack. """
+    """Attempts to crack a password using brute-force attack."""
     target_hash = hash_password(target_password, algorithm)
-    characters = string.ascii_lowercase + string.digits  # Kleinbuchstaben + Zahlen
+    characters = string.ascii_lowercase + string.digits  # Using lowercase letters and digits only
     
     for length in range(1, max_length + 1):
         for guess in itertools.product(characters, repeat=length):
             guess_word = "".join(guess)
             if hash_password(guess_word, algorithm) == target_hash:
-                return f"[+] Password found: {guess_word}"
+                return guess_word  # Password found
     
-    return "[-] No match found (try increasing max_length)"
+    return None  # No match found
 
 if __name__ == "__main__":
+    # User input for attack method
+    print("Select attack method:")
+    print("1 - Dictionary Attack")
+    print("2 - Brute Force Attack")
+    print("3 - Both")
+    
+    choice = input("Enter your choice (1/2/3): ")
+
+    # Define target password and dictionary file
     password_to_crack = "abc"
     password_list = "PasswordList.txt"
+    
+    found_password = None
+    method_used = None
 
-    print("Starting Dictionary Attack...")
-    print(dictionary_attack(password_list, password_to_crack))
-
-    print("\nStarting Brute-Force Attack...")
-    print(brute_force_attack(password_to_crack, max_length=3))  # Passwortlänge bis zu 3 Zeichen
+    # Execute selected attack method(s)
+    if choice == "1":
+        print("\n[+] Starting Dictionary Attack...")
+        found_password = dictionary_attack(password_list, password_to_crack)
+        method_used = "Dictionary Attack"
+    elif choice == "2":
+        print("\n[+] Starting Brute-Force Attack...")
+        found_password = brute_force_attack(password_to_crack, max_length=3)
+        method_used = "Brute-Force Attack"
+    elif choice == "3":
+        print("\n[+] Starting Dictionary Attack...")
+        found_password = dictionary_attack(password_list, password_to_crack)
+        method_used = "Dictionary Attack"
+        
+        if not found_password:
+            print("\n[+] Dictionary Attack failed. Starting Brute-Force Attack...")
+            found_password = brute_force_attack(password_to_crack, max_length=3)
+            method_used = "Brute-Force Attack"
+    
+    # Display final results
+    if found_password:
+        print(f"\n[+] Password cracked successfully using {method_used}: {found_password}")
+    else:
+        print("\n[-] Password could not be cracked.")
