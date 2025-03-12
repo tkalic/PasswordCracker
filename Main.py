@@ -1,6 +1,7 @@
 import hashlib
 import itertools
 import string
+import concurrent.futures
 
 def hash_password(password, algorithm="sha256"):
     """Hashes a password using the specified algorithm."""
@@ -30,17 +31,26 @@ def dictionary_attack(password_list_file, target_password, algorithm="sha256"):
         print("[!] Error: Password list file not found.")
         return None
 
+def brute_force_worker(guess, target_hash, algorithm):
+    """Hashes a password guess and checks if it matches the target hash."""
+    if hash_password(guess, algorithm) == target_hash:
+        return guess  # Return the found password
+    return None
+
 def brute_force_attack(target_password, max_length=4, algorithm="sha256"):
-    """Attempts to crack a password using brute-force attack."""
+    """Attempts to crack a password using a brute-force attack with multithreading."""
     target_hash = hash_password(target_password, algorithm)
     characters = string.ascii_lowercase + string.digits  # Using lowercase letters and digits only
     
-    for length in range(1, max_length + 1):
-        for guess in itertools.product(characters, repeat=length):
-            guess_word = "".join(guess)
-            if hash_password(guess_word, algorithm) == target_hash:
-                return guess_word  # Password found
-    
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        for length in range(1, max_length + 1):
+            guesses = ("".join(guess) for guess in itertools.product(characters, repeat=length))
+            results = executor.map(lambda g: brute_force_worker(g, target_hash, algorithm), guesses)
+            
+            for result in results:
+                if result:
+                    return result  # Password found
+
     return None  # No match found
 
 if __name__ == "__main__":
@@ -65,7 +75,7 @@ if __name__ == "__main__":
         found_password = dictionary_attack(password_list, password_to_crack)
         method_used = "Dictionary Attack"
     elif choice == "2":
-        print("\n[+] Starting Brute-Force Attack...")
+        print("\n[+] Starting Brute-Force Attack with Multithreading...")
         found_password = brute_force_attack(password_to_crack, max_length=3)
         method_used = "Brute-Force Attack"
     elif choice == "3":
@@ -74,7 +84,7 @@ if __name__ == "__main__":
         method_used = "Dictionary Attack"
         
         if not found_password:
-            print("\n[+] Dictionary Attack failed. Starting Brute-Force Attack...")
+            print("\n[+] Dictionary Attack failed. Starting Brute-Force Attack with Multithreading...")
             found_password = brute_force_attack(password_to_crack, max_length=3)
             method_used = "Brute-Force Attack"
     
