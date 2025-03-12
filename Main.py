@@ -1,14 +1,12 @@
 import hashlib
+import itertools
+import string
 
 # Passwort eingeben
 # Hash davon speichern
 # Hash-Algorithmus wählen
 # Bibliothek hinzufügen
 
-# 1. Dictionary Angriff
-
-
-# 2. Brute-Force Angriff
 
 def hash_password(password, algorithm="sha256"):
     """ Hashes a password using the specified algorithm. """
@@ -20,6 +18,8 @@ def hash_password(password, algorithm="sha256"):
         return hashlib.sha512(password.encode()).hexdigest()
     else:
         raise ValueError("Unsupported hashing algorithm")
+
+# 1. Dictionary attack
 
 def dictionary_attack(password_list_file, target_password, algorithm="sha256"):
     """ Tries to crack a hashed password using a dictionary attack. """
@@ -37,9 +37,27 @@ def dictionary_attack(password_list_file, target_password, algorithm="sha256"):
     except FileNotFoundError:
         return "[!] Error: Password list file not found."
 
-if __name__ == "__main__":
-    password_to_crack = "admin"
-    password_list = "PasswordList.txt"
+# 2. Brute-Force  attack
+
+def brute_force_attack(target_password, max_length=4, algorithm="sha256"):
+    """ Tries to crack a hashed password using brute-force attack. """
+    target_hash = hash_password(target_password, algorithm)
+    characters = string.ascii_lowercase + string.digits  # Kleinbuchstaben + Zahlen
     
-    result = dictionary_attack(password_list, password_to_crack)
-    print(result)
+    for length in range(1, max_length + 1):
+        for guess in itertools.product(characters, repeat=length):
+            guess_word = "".join(guess)
+            if hash_password(guess_word, algorithm) == target_hash:
+                return f"[+] Password found: {guess_word}"
+    
+    return "[-] No match found (try increasing max_length)"
+
+if __name__ == "__main__":
+    password_to_crack = "abc"
+    password_list = "PasswordList.txt"
+
+    print("Starting Dictionary Attack...")
+    print(dictionary_attack(password_list, password_to_crack))
+
+    print("\nStarting Brute-Force Attack...")
+    print(brute_force_attack(password_to_crack, max_length=3))  # Passwortlänge bis zu 3 Zeichen
