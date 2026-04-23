@@ -144,6 +144,17 @@ PasswordCracker/
 
 ---
 
+## Security Context
+
+This project illustrates why strong password storage policies matter in practice.
+
+- **MD5 and SHA1 are broken** for password storage — both crackable in milliseconds on consumer hardware
+- **Modern standard:** bcrypt, scrypt, or Argon2 with salting (NIST SP 800-63B, §5.1.1.2)
+- **Relevance to ISO 27001:** Annex A Control 8.24 requires the use of cryptographic standards — weak hashing directly violates this
+- **BSI recommendation:** BSI TR-02102 explicitly deprecates MD5 and SHA1 for security-critical applications
+
+---
+
 ## Author
 
 Edwin Tkalic — [github.com/tkalic](https://github.com/tkalic)
