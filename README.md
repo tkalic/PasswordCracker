@@ -64,28 +64,32 @@ No external dependencies — uses Python standard library only.
 
 ## Example Output
 
+## Example Output
+
 ```
   ██████╗  ██████╗
-  ██╔══██╗██╔════╝   Password Cracker v2.0
+  ██╔══██╗██╔════╝   Password Cracker v3.0
   ██████╔╝██║        by Edwin Tkalic
   ██╔═══╝ ██║        github.com/tkalic
   ██║     ╚██████╗
   ╚═╝      ╚═════╝   For educational purposes only.
 
   ──────────────────────────────────────────────────
-  Modus      : Dictionary Attack
-  Algorithmus: MD5
-  Wordlist   : PasswordList.txt
-  Ziel-Hash  : 482c811da5d5b4bc6d497ffa98491e38
+  Mode      : Dictionary Attack
+  Algorithm : MD5
+  Wordlist  : cracker/wordlists/top10k.txt
+  Target    : 482c811da5d5b4bc6d497ffa98491e38
 
-  [████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]   9.7%           3 / 31
+  [████████████████████████████████████████] 100.0%  password123
 
-  ✓ PASSWORT GEFUNDEN!
-  Passwort   : password123
-  Hash       : 482c811da5d5b4bc6d497ffa98491e38
-  Versuche   : 3
-  Zeit       : 0.00s
-  Speed      : 24,245 Hashes/Sek
+  ✓ PASSWORD FOUND!
+  Password      : password123
+  Algorithm     : MD5
+  Attack        : Dictionary
+  Attempts      : 10,000
+  Duration      : 0.005s
+  Speed         : 1,960,688 hashes/sec
+  Hash strength : [INSECURE]  Deprecated — NIST SP 800-131A, BSI TR-02102-1
 ```
 
 ---
