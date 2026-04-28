@@ -1,0 +1,20 @@
+# Large wordlists — download separately via scripts/download_wordlists.sh
+cracker/wordlists/rockyou.txt
+cracker/wordlists/*.txt.gz
+
+# Generated reports
+*.html
+!README_assets/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
