@@ -1,9 +1,8 @@
 # PasswordCracker
 
-A terminal-based password hash cracking tool written in Python — built to understand how dictionary and brute force attacks work in practice, and why modern password storage standards exist.
+A terminal-based password hash cracking tool written in Python — built to understand how dictionary and brute force attacks work in practice.
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue?logo=python&logoColor=white)
-![Tests](https://img.shields.io/badge/Tests-36%20passed-brightgreen)
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![Educational](https://img.shields.io/badge/Purpose-Educational-orange)
 
@@ -13,27 +12,24 @@ A terminal-based password hash cracking tool written in Python — built to unde
 
 ## Features
 
-- **Dictionary attack** — test a wordlist against a target hash, with multithreaded parallel processing
+- **Dictionary attack** — test a wordlist against a target hash line by line
 - **Brute force attack** — systematically try all character combinations up to a given length
-- **Auto hash detection** — identifies MD5, SHA1, SHA256, SHA512, bcrypt, Argon2 by format
-- **Hash generator** — create hashes from plaintext for testing, including bcrypt and Argon2id
-- **HTML audit report** — generates a compliance-annotated report per run (`--report`)
-- **Built-in wordlist** — 10,000 most common passwords included, no setup needed
+- **Auto hash detection** — identifies MD5, SHA1, SHA256, SHA512 by hash length
+- **Hash generator** — create hashes from plaintext for testing
 - **Live progress bar** — shows speed in hashes/sec and current attempt
 - **Color-coded terminal UI** — clean, readable output with instant visual feedback
+- **Built-in wordlist generator** — no downloads needed to run a demo
 
 ---
 
 ## Supported Hash Types
 
-| Algorithm | Status | Standard Reference |
-|-----------|--------|--------------------|
-| MD5 | ❌ Deprecated | NIST SP 800-131A, BSI TR-02102-1 |
-| SHA1 | ❌ Deprecated | NIST SP 800-131A rev2 (2019) |
-| SHA256 | ⚠️ Insufficient for passwords | NIST FIPS 180-4 |
-| SHA512 | ⚠️ Insufficient for passwords | NIST FIPS 180-4 |
-| bcrypt | ✅ Recommended | NIST SP 800-63B §5.1.1.2 |
-| Argon2id | ✅ Recommended | NIST SP 800-63B §5.1.1.2 |
+| Algorithm | Hash length | Example |
+|-----------|-------------|---------|
+| MD5 | 32 chars | `482c811da5d5b4bc6d497ffa98491e38` |
+| SHA1 | 40 chars | `cbfdac6008f9cab4083784cbd1874f76618d2a97` |
+| SHA256 | 64 chars | `ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f` |
+| SHA512 | 128 chars | — |
 
 ---
 
@@ -42,76 +38,54 @@ A terminal-based password hash cracking tool written in Python — built to unde
 ```bash
 git clone https://github.com/tkalic/PasswordCracker
 cd PasswordCracker
-pip install -r requirements.txt
 
-# Run full demo — generates a hash and cracks it automatically
+# Run full demo — generates wordlist and cracks an MD5 hash automatically
 python3 main.py demo
 
-# Generate a hash from plaintext
-python3 main.py hash "password123" -a sha256
+# Generate a hash from plaintext (useful for testing)
+python3 main.py hash "password123" -a md5
 
 # Dictionary attack — auto-detects hash type
 python3 main.py dict 482c811da5d5b4bc6d497ffa98491e38
 
-# Dictionary attack with custom wordlist + HTML report
-python3 main.py dict 482c811da5d5b4bc6d497ffa98491e38 -w /path/to/rockyou.txt --report report.html
+# Dictionary attack with custom wordlist (e.g. rockyou.txt)
+python3 main.py dict 482c811da5d5b4bc6d497ffa98491e38 -w /path/to/rockyou.txt
 
 # Brute force — try all alphanumeric combinations up to 4 chars
 python3 main.py brute 482c811da5d5b4bc6d497ffa98491e38 --max 4
 
-# Brute force — digits only, 4–6 chars, with report
-python3 main.py brute <hash> -c digits --min 4 --max 6 --report report.html
+# Brute force — digits only, 4–6 chars
+python3 main.py brute <hash> -c digits --min 4 --max 6
 ```
+
+No external dependencies — uses Python standard library only.
 
 ---
 
-## Wordlists
-
-**Built-in:** `cracker/wordlists/top10k.txt` — 10,000 most common passwords (from [SecLists](https://github.com/danielmiessler/SecLists)), included by default.
-
-**Optional — rockyou.txt (14M passwords):** Too large for Git. Download with the included script:
-
-```bash
-bash scripts/download_wordlists.sh
-python3 main.py dict <hash> -w cracker/wordlists/rockyou.txt
-```
-
----
-
-## HTML Audit Report
-
-Pass `--report <filename>.html` to any attack to generate a compliance-annotated audit report:
-
-```bash
-python3 main.py dict <hash> --report audit.html
-```
-
-The report includes:
-- Attack summary (type, attempts, speed, duration)
-- Algorithm security assessment
-- Compliance evaluation against NIST SP 800-63B, ISO 27001 Annex A 8.24, BSI TR-02102-1
-- Concrete remediation recommendations
-
----
-
-## Project Structure
+## Example Output
 
 ```
-PasswordCracker/
-├── cracker/
-│   ├── algorithms.py      # Hash generation, detection, verification + compliance metadata
-│   ├── attacks.py         # Dictionary & brute force engines (multithreaded)
-│   ├── report.py          # HTML audit report generator
-│   └── wordlists/
-│       └── top10k.txt     # Built-in wordlist (10k most common passwords)
-├── tests/
-│   └── test_cracker.py    # 36 unit tests (pytest)
-├── scripts/
-│   └── download_wordlists.sh  # Download rockyou.txt (~130MB)
-├── main.py                # CLI entry point
-├── requirements.txt
-├── .gitignore
-└── README.md
+  ██████╗  ██████╗
+  ██╔══██╗██╔════╝   Password Cracker v2.0
+  ██████╔╝██║        by Edwin Tkalic
+  ██╔═══╝ ██║        github.com/tkalic
+  ██║     ╚██████╗
+  ╚═╝      ╚═════╝   For educational purposes only.
+
+  ──────────────────────────────────────────────────
+  Modus      : Dictionary Attack
+  Algorithmus: MD5
+  Wordlist   : PasswordList.txt
+  Ziel-Hash  : 482c811da5d5b4bc6d497ffa98491e38
+
+  [████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░]   9.7%           3 / 31
+
+  ✓ PASSWORT GEFUNDEN!
+  Passwort   : password123
+  Hash       : 482c811da5d5b4bc6d497ffa98491e38
+  Versuche   : 3
+  Zeit       : 0.00s
+  Speed      : 24,245 Hashes/Sek
 ```
 
 ---
@@ -126,22 +100,18 @@ Modes:
   dict        Dictionary attack using a wordlist
   brute       Brute force attack
   hash        Generate a hash from plaintext
+  wordlist    Generate a demo wordlist (PasswordList.txt)
 
 Dictionary options:
   <hash>              Target hash to crack
-  -w, --wordlist      Path to wordlist (default: built-in top10k.txt)
-  --report FILE       Save HTML audit report to FILE
+  -w, --wordlist      Path to wordlist (default: PasswordList.txt)
+  -a, --algo          md5 | sha1 | sha256 | sha512 | auto (default: auto)
 
 Brute force options:
   <hash>              Target hash to crack
   -c, --charset       digits | lower | alpha | alphanum | common (default: alphanum)
   --min               Minimum password length (default: 1)
   --max               Maximum password length (default: 5)
-  --report FILE       Save HTML audit report to FILE
-
-Hash generation:
-  <plaintext>         Password to hash
-  -a, --algo          md5 | sha1 | sha256 | sha512 | bcrypt | argon2 (default: sha256)
 ```
 
 ---
@@ -150,34 +120,41 @@ Hash generation:
 
 A hash function is one-way — you cannot reverse it. This tool doesn't reverse hashes. Instead it hashes thousands of candidate passwords and compares each result to the target hash. If they match, the original password is found.
 
-**Dictionary attack** exploits the fact that most people use common passwords. A wordlist like [rockyou.txt](https://github.com/brannondorsey/naive-hashcat/releases) (14M real passwords from data breaches) cracks most weak passwords in seconds. Parallel processing via Python's `ThreadPoolExecutor` significantly improves throughput on fast algorithms like MD5 and SHA256.
+**Dictionary attack** exploits the fact that most people use common passwords. A wordlist like [rockyou.txt](https://github.com/brannondorsey/naive-hashcat/releases) (14M real passwords from data breaches) cracks most weak passwords in seconds.
 
-**Brute force** tries every possible combination. Effective for short passwords but exponentially slower as length increases — a 6-char alphanumeric password has ~56 billion combinations.
+**Brute force** tries every possible combination. Effective for short passwords but exponentially slower as length increases — a 6-char alphanumeric password has 56 billion combinations.
+
+---
+
+## Recommended Wordlists
+
+- [rockyou.txt](https://github.com/brannondorsey/naive-hashcat/releases) — 14M passwords from real data breaches
+- [SecLists](https://github.com/danielmiessler/SecLists) — curated collection of security wordlists
+
+---
+
+## Project Structure
+
+```
+PasswordCracker/
+├── main.py           # Main script — all logic in one file
+├── PasswordList.txt  # Auto-generated demo wordlist (run: python3 main.py wordlist)
+└── README.md
+```
 
 ---
 
 ## Security Context
 
-This project demonstrates in practice why modern password storage standards exist.
+This project illustrates why strong password storage policies matter in practice.
 
-- **MD5 and SHA1 are broken** for password storage — crackable in milliseconds on consumer hardware with no salt
-- **SHA256/SHA512 are not designed for passwords** — they are fast by design, which makes brute force trivial without a work factor
-- **Modern standard:** bcrypt (cost ≥ 12) or Argon2id with salting — both are memory-intensive and adaptive per **NIST SP 800-63B §5.1.1.2**
-- **ISO 27001 relevance:** Annex A Control 8.24 requires the use of adequate cryptographic standards — deploying MD5/SHA1 for password storage directly violates this control
-- **BSI TR-02102-1** explicitly deprecates MD5 and SHA1 for all security-critical applications
-
----
-
-## Tests
-
-```bash
-python3 -m pytest tests/ -v
-```
-
-36 tests covering hash generation, detection, verification, attack logic, and report generation.
+- **MD5 and SHA1 are broken** for password storage — both crackable in milliseconds on consumer hardware
+- **Modern standard:** bcrypt, scrypt, or Argon2 with salting (NIST SP 800-63B, §5.1.1.2)
+- **Relevance to ISO 27001:** Annex A Control 8.24 requires the use of cryptographic standards — weak hashing directly violates this
+- **BSI recommendation:** BSI TR-02102 explicitly deprecates MD5 and SHA1 for security-critical applications
 
 ---
 
 ## Author
 
-Edwin Tkalic — [github.com/tkalic](https://github.com/tkalic) · [linkedin.com/in/edwin-tkalic-2b4b51287](https://linkedin.com/in/edwin-tkalic-2b4b51287)
+Edwin Tkalic — [github.com/tkalic](https://github.com/tkalic)
